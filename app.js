@@ -1,0 +1,33 @@
+require("dotenv").config();
+const express = require("express");
+const mongoose = require("mongoose");
+const path = require("path");
+const bodyParser = require("body-parser");
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+const connectDB = async () => {
+  try {
+    const dbURI = process.env.MONGO_URI;
+    const conn = await mongoose.connect(dbURI); // No need for useNewUrlParser or useUnifiedTopology
+    console.log(`MongoDB Connected: ${conn.connection.host}`);
+  } catch (error) {
+    console.error(`Error: ${error.message}`);
+    process.exit(1); // Exit process with failure
+  }
+};
+
+connectDB()
+
+app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static("public"));
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
+
+// Routes
+app.use("/admin", require("./routes/admin"));
+app.use("/", require("./routes/user"));
+
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));

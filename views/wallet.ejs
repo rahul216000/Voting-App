@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wallet</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --primary: #5898b7;
+      --secondary: #9dceda;
+      --background: #ececdf;
+      --accent: #cbdea4;
+      --dark-text: #2c3e50;
+      --light-text: #91b461;
+      --white: #ffffff;
+      --radius: 16px;
+      --shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--background);
+      color: var(--dark-text);
+    }
+
+    .top-menu {
+      background-color: var(--primary);
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      box-shadow: var(--shadow);
+    }
+
+    .site-name {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    .token-display {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 600;
+    }
+
+    .token-display svg {
+      width: 22px;
+      height: 22px;
+      filter: brightness(0) invert(1);
+    }
+
+    .wallet-container {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 1rem;
+    }
+
+    .balance-box {
+      background-color: var(--white);
+      padding: 2rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .balance-box h2 {
+      margin-bottom: 0.5rem;
+      color: var(--primary);
+    }
+
+    .plans {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 2rem;
+    }
+
+    .plan-card {
+      background-color: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 2rem;
+      width: 250px;
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+
+    .plan-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .plan-card h3 {
+      color: var(--dark-text);
+      font-size: 1.3rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .plan-card p {
+      font-size: 1rem;
+      color: var(--light-text);
+      margin-bottom: 1.5rem;
+    }
+
+    .plan-card button {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: var(--radius);
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .plan-card button:hover {
+      background-color: #407596;
+    }
+
+    .popup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: 100vw;
+      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .popup.show {
+      display: flex;
+    }
+
+    .popup-box {
+      background-color: var(--white);
+      padding: 2rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .popup-box h2 {
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+
+    .popup-box button {
+      background-color: var(--accent);
+      border: none;
+      padding: 0.5rem 1.2rem;
+      font-size: 1rem;
+      border-radius: var(--radius);
+      cursor: pointer;
+    }
+
+    body {
+  font-family: 'Poppins', sans-serif;
+  background-color: var(--background);
+  color: var(--dark-text);
+}
+
+.balance-box {
+  background-color: var(--white);
+  padding: 3rem 2rem;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  text-align: center;
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.balance-box img {
+  width: 100px;
+  height: 100px;
+  margin-bottom: 1rem;
+}
+
+.balance-box h3 {
+  font-size: 1.2rem;
+  color: var(--light-text);
+  margin-bottom: 0.3rem;
+  letter-spacing: 1px;
+}
+
+.balance-box .token-amount {
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.plan-card {
+  background-color: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 2rem;
+  width: 260px;
+  text-align: center;
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.plan-card:hover {
+  transform: translateY(-6px);
+}
+
+.plan-card h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--primary);
+  margin-bottom: 0.8rem;
+}
+
+.plan-card p {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--dark-text);
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.3px;
+}
+
+.plan-card button {
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  padding: 0.7rem 1.4rem;
+  border-radius: var(--radius);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.plan-card button:hover {
+  background-color: #407596;
+}
+
+
+
+    @media (max-width: 768px) {
+      .plans {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="top-menu">
+    <div class="site-name" onclick="window.location.href='/'">Voting</div>
+    <div class="token-display">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
+        <path
+          d="M5.5 9.511c.076.954.83 1.697 2.182 1.785V12h.6v-.709c1.4-.098 2.218-.846 2.218-1.932 0-.987-.626-1.496-1.745-1.76l-.473-.112V5.57c.6.068.982.396 1.074.85h1.052c-.076-.919-.864-1.638-2.126-1.716V4h-.6v.719c-1.195.117-2.01.836-2.01 1.853 0 .9.606 1.472 1.613 1.707l.397.098v2.034c-.615-.093-1.022-.43-1.114-.9z" />
+        <path
+          d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+        <path
+          d="M8 13.5a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11m0 .5A6 6 0 1 0 8 2a6 6 0 0 0 0 12" />
+      </svg>
+      <span id="tokenCount">0</span>
+    </div>
+  </div>
+
+  <div class="wallet-container">
+    <div class="balance-box">
+  <img src="/coin.png" alt="Coin Icon">
+  <h3>Total Coins</h3>
+  <div class="token-amount" id="balance">0</div>
+</div>
+
+
+    <div class="plans">
+      <div class="plan-card">
+        <h3>100 Coins</h3>
+        <p>CHF 10</p>
+        <button onclick="purchaseTokens(100)">Pay Now</button>
+      </div>
+      <div class="plan-card">
+        <h3>250 Coins</h3>
+        <p>CHF 18</p>
+        <button onclick="purchaseTokens(250)">Pay Now</button>
+      </div>
+      <div class="plan-card">
+        <h3>500 Coins</h3>
+        <p>CHF 35</p>
+        <button onclick="purchaseTokens(500)">Pay Now</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="popup" id="successPopup">
+    <div class="popup-box">
+      <h2>Payment Successful!</h2>
+      <p style="margin-bottom: 5px;">Coins have been credited to your account.</p>
+      <button onclick="closePopup()">OK</button>
+    </div>
+  </div>
+
+  <script>
+    let tokens = parseInt(localStorage.getItem('tokens')) || 0;
+
+    const balanceDisplay = document.getElementById('balance');
+    const tokenDisplay = document.getElementById('tokenCount');
+    const popup = document.getElementById('successPopup');
+
+    function updateDisplays() {
+      balanceDisplay.textContent = tokens;
+      tokenDisplay.textContent = tokens;
+    }
+
+    function purchaseTokens(amount) {
+      tokens += amount;
+      localStorage.setItem('tokens', tokens);
+      updateDisplays();
+      popup.classList.add('show');
+    }
+
+    function closePopup() {
+      popup.classList.remove('show');
+    }
+
+    // Initialize display on load
+    updateDisplays();
+  </script>
+</body>
+
+</html>
