@@ -25,6 +25,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
+app.use("/uploads", express.static(path.join(__dirname, "public", "uploads")));
+
 
 // Routes
 app.use("/admin", require("./routes/admin"));

@@ -5,10 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Voting</title>
-
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
-
     <style>
         :root {
             --primary: #5898b7;
@@ -32,7 +29,120 @@
             font-family: 'Poppins', sans-serif;
             background-color: var(--background);
             color: var(--dark-text);
-            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 3rem auto;
+            background-color: var(--white);
+            padding: 2rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .question img {
+            display: block;
+            margin: 1rem auto;
+            max-width: 220px;
+            height: auto;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .ques-text {
+            font-size: 1.4rem;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        .options input[type="radio"] {
+            display: none;
+        }
+
+        .options label {
+            display: block;
+            background: var(--dark-text);
+            padding: 0.8rem 1rem;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 600;
+            color: white;
+            border: 2px solid transparent;
+        }
+
+        .options input[type="radio"]:checked+label {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .popup,
+        .jackpot-popup {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            text-align: center;
+            max-width: 90%;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 10, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .overlay.show {
+            display: flex;
+        }
+
+        .popup button,
+        .jackpot-popup button {
+            margin-top: 1rem;
+            padding: 10px 20px;
+            border-radius: var(--radius);
+            border: none;
+            background: var(--primary);
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .toggle-options {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .toggle-options input[type="radio"] {
+            display: none;
+        }
+
+        .toggle-options label {
+            background: var(--secondary);
+            padding: 10px 20px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-weight: bold;
+            border: 2px solid transparent;
+            transition: background 0.3s;
+        }
+
+        .toggle-options input[type="radio"]:checked+label {
+            background: var(--primary);
+            color: white;
         }
 
         .top-menu {
@@ -55,250 +165,152 @@
             align-items: center;
             gap: 0.5rem;
             font-weight: 600;
+            cursor: pointer;
         }
 
-        .token-display img {
-            width: 22px;
-            height: 22px;
+        .token-display svg {
             filter: brightness(0) invert(1);
-        }
-
-        .container {
-            max-width: 700px;
-            margin: 3rem auto;
-            background-color: var(--white);
-            padding: 2rem;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            animation: fadeIn 0.8s ease;
-        }
-
-        .question {
-            font-size: 1.4rem;
-            margin-bottom: 1.5rem;
-            font-weight: 600;
-        }
-
-        .options {
-            display: flex;
-            flex-direction: column;
-            gap: 0.8rem;
-        }
-
-        .options input[type="radio"] {
-            display: none;
-        }
-
-        .options label {
-            display: block;
-            background: var(--dark-text);
-            padding: 0.8rem 1rem;
-            border-radius: var(--radius);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 600;
-            color: white;
-            border: 2px solid transparent;
-        }
-
-        .options input[type="radio"]:checked+label {
-            background-color: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(10, 10, 10, 0.6);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-        }
-
-        .overlay.show {
-            display: flex;
-        }
-
-        .popup {
-            background: var(--white);
-            padding: 2rem;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            transform: scale(0.7);
-            animation: scaleIn 0.3s forwards;
-            text-align: center;
-            max-width: 90%;
-        }
-
-        .popup h2 {
-            margin-bottom: 1rem;
-            font-size: 1.1rem;
-            color: var(--primary);
-        }
-
-        .popup button {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 0.6rem 1.2rem;
-            border-radius: var(--radius);
-            margin-top: 1rem;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .popup button:hover {
-            background: #407596;
-        }
-
-        @keyframes scaleIn {
-            to {
-                transform: scale(1);
-            }
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
         }
 
         @media (max-width: 600px) {
             .container {
-                margin: 1rem;
-                padding: 1.5rem 1.2rem;
+                padding: 1.2rem;
+                width: 95%;
             }
-
-            .question {
-                font-size: 1.2rem;
-            }
-
-            .options label {
-                padding: 0.7rem 0.9rem;
-                font-size: 0.95rem;
-            }
-
-            .popup h2 {
-                font-size: 1rem;
-            }
-
-            .popup button {
-                font-size: 0.95rem;
-                padding: 0.5rem 1rem;
-            }
-        }
-
-        .token-display{
-            cursor: pointer;
         }
     </style>
 </head>
 
 <body>
+
+
     <div class="top-menu">
         <div class="site-name">Voting</div>
         <div class="token-display" onclick="window.location.href='/wallet'">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-coin" viewBox="0 0 16 16">
-                <path d="M5.5 9.511c.076.954.83 1.697 2.182 1.785V12h.6v-.709c1.4-.098 2.218-.846 2.218-1.932 0-.987-.626-1.496-1.745-1.76l-.473-.112V5.57c.6.068.982.396 1.074.85h1.052c-.076-.919-.864-1.638-2.126-1.716V4h-.6v.719c-1.195.117-2.01.836-2.01 1.853 0 .9.606 1.472 1.613 1.707l.397.098v2.034c-.615-.093-1.022-.43-1.114-.9z"/>
-                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
-                <path d="M8 13.5a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11m0 .5A6 6 0 1 0 8 2a6 6 0 0 0 0 12"/>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-coin"
+                viewBox="0 0 16 16">
+                <path
+                    d="M5.5 9.511c.076.954.83 1.697 2.182 1.785V12h.6v-.709c1.4-.098 2.218-.846 2.218-1.932 0-.987-.626-1.496-1.745-1.76l-.473-.112V5.57c.6.068.982.396 1.074.85h1.052c-.076-.919-.864-1.638-2.126-1.716V4h-.6v.719c-1.195.117-2.01.836-2.01 1.853 0 .9.606 1.472 1.613 1.707l.397.098v2.034c-.615-.093-1.022-.43-1.114-.9z" />
+                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+                <path d="M8 13.5a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11m0 .5A6 6 0 1 0 8 2a6 6 0 0 0 0 12" />
             </svg>
-            <span id="tokenCount" >50</span>
+            <span id="tokenCount">50</span>
         </div>
     </div>
 
+
     <div class="container">
-        <div class="question"><%= latest?.question || "No active question" %></div>
+        <div class="question" style="margin-bottom: 2rem;">
+            <span class="ques-text">
+                <%= latest?.question || "No question" %>
+            </span>
+            <% if (latest?.questionImage) { %>
+                <img src="/uploads/<%= latest.questionImage %>">
+                <% } %>
+        </div>
         <div class="options">
-            <% if (latest?.options) { %>
-                <% latest.options.forEach((opt, i) => { 
-                    const letter = String.fromCharCode(65 + i); %>
-                    <input type="radio" id="<%= letter.toLowerCase() %>" name="answer" value="<%= letter %>" data-text="<%= opt %>">
-                    <label for="<%= letter.toLowerCase() %>"><%= letter %>) <%= opt %></label>
+            <% latest.options.forEach((opt, i)=> {
+                const letter = String.fromCharCode(65 + i); %>
+                <input type="radio" id="opt<%= i %>" name="answer" value="<%= letter %>" data-text="<%= opt.text %>">
+                <label for="opt<%= i %>">
+                    <%= letter %>) <%= opt.text %>
+                            <% if (opt.image) { %><br><img src="/uploads/<%= opt.image %>"
+                                    style="max-width:100px; display:block; margin:5px auto;">
+                                <% } %>
+                </label>
                 <% }) %>
-            <% } %>
         </div>
     </div>
 
     <div class="overlay" id="overlay">
-        <div class="popup">
-            <h2 id="popupText">You selected option for tokens.</h2>
-            <button onclick="handleFirstPopup()">OK</button>
+        <div class="jackpot-popup">
+            <h2 id="popupText"></h2>
+            <div class="toggle-options">
+                <input type="radio" id="yes" name="jackpot" value="yes" checked>
+                <label for="yes">Yes</label>
+                <input type="radio" id="no" name="jackpot" value="no">
+                <label for="no">No</label>
+            </div>
+            <button onclick="handleJackpotChoice()">OK</button>
         </div>
     </div>
 
-    <div class="overlay" id="thankyouOverlay">
+    <div class="overlay" id="resultOverlay">
         <div class="popup">
-            <h2 id="thankyouText">Thank you for your vote.</h2>
-            <button onclick="closeThankyou()">OK</button>
+            <h2 id="resultText"></h2>
+            <p>Remember: with each vote your chances for winning the jackpot are higher</p>
+            <button onclick="closeResult()">Close</button>
         </div>
     </div>
 
     <script>
-        const radios = document.querySelectorAll('input[name="answer"]');
-        const overlay = document.getElementById('overlay');
-        const thankyouOverlay = document.getElementById('thankyouOverlay');
-        const popupText = document.getElementById('popupText');
-        const thankyouText = document.getElementById('thankyouText');
-        const tokenDisplay = document.getElementById('tokenCount');
+        let tokens = parseInt(localStorage.getItem('tokens') ?? 1000);
+        document.getElementById("tokenCount").textContent = tokens;
+        localStorage.setItem('tokens', tokens);
+        const tokenCost = <%= parseInt(latest?.token || 0) %>;
+        const correctAnswer = "<%= latest?.correctAnswer %>";
 
-        let selectedOption = '';
-        let selectedText = '';
-        const tokenCost = <%= latest?.token ? parseInt(latest.token) : 0 %>;
+        let selectedOption = "";
+        let selectedText = "";
 
-        let tokens = parseInt(localStorage.getItem('tokens') ?? (localStorage.setItem('tokens', 50), 50));
-        tokenDisplay.textContent = tokens;
-
-        radios.forEach(radio => {
-            radio.addEventListener('change', () => {
-                selectedOption = radio.value;
-                selectedText = radio.dataset.text;
-                popupText.textContent = `You selected option ${selectedOption} (${selectedText}) for ${tokenCost} tokens.`;
-                overlay.classList.add('show');
+        document.querySelectorAll('input[name="answer"]').forEach(r => {
+            r.addEventListener('change', () => {
+                selectedOption = r.value;
+                selectedText = r.dataset.text;
+                document.getElementById("popupText").textContent = `You selected option ${selectedOption}, answer ${selectedText}. Do you want to compete for the jackpot for ${tokenCost} coins?`;
+                document.getElementById("overlay").classList.add("show");
             });
         });
 
-        function handleFirstPopup() {
-            if (tokens >= tokenCost) {
-                tokens -= tokenCost;
-                localStorage.setItem('tokens', tokens);
-                tokenDisplay.textContent = tokens;
+        function handleJackpotChoice() {
+            const wantJackpot = document.querySelector('input[name="jackpot"]:checked').value;
+            let result = "";
+
+            if (wantJackpot === "yes") {
+                if (tokens < tokenCost) {
+                    result = `Not enough balance. This question needs ${tokenCost} coins.`;
+                } else {
+                    tokens -= tokenCost;
+                    localStorage.setItem('tokens', tokens);
+
+                    document.getElementById("tokenCount").textContent = tokens;
+
+                    if (selectedOption === correctAnswer) {
+                        result = `Answer ${selectedOption} is the correct answer. You are qualified to win the jackpot.`;
+                    } else {
+                        result = `The correct answer is ${correctAnswer}. Thank you for your participation.`;
+                    }
+                }
+            } else {
+                if (selectedOption === correctAnswer) {
+                    result = `Answer ${selectedOption} is the correct answer. You are not participating in the contest for the jackpot.`;
+                } else {
+                    result = `The correct answer is ${correctAnswer}. Thank you for your participation.`;
+                }
             }
 
-            overlay.classList.remove('show');
-            thankyouText.textContent = `Your answer was ${selectedOption}. Thank you for your vote.`;
-            thankyouOverlay.classList.add('show');
+            document.getElementById("overlay").classList.remove("show");
+            document.getElementById("resultText").textContent = result;
+            document.getElementById("resultOverlay").classList.add("show");
         }
 
-        function closeThankyou() {
-            thankyouOverlay.classList.remove('show');
-            radios.forEach(r => r.checked = false);
-            document.querySelectorAll('.options label').forEach(label => label.blur());
-            selectedOption = '';
-            selectedText = '';
+        function closeResult() {
+            document.getElementById("resultOverlay").classList.remove("show");
+            document.querySelectorAll('input[name="answer"]').forEach(r => r.checked = false);
         }
+
 
         const params = new URLSearchParams(window.location.search);
         if (params.get("clear") === "true") {
             localStorage.removeItem("tokens");
+            // Add any other keys you use
+            console.log("Tokens cleared from localStorage");
+
+            // Redirect to the same site without query parameters
             const url = window.location.origin + window.location.pathname;
-            window.location.replace(url);
+            window.location.replace(url); // replaces the current history entry
         }
-
-
-
     </script>
 </body>
+
 </html>
