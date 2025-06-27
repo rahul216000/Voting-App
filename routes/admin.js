@@ -37,7 +37,7 @@ router.post(
   ]),
   async (req, res) => {
     try {
-      const { id, question, token, correctAnswer } = req.body;
+      const { id, question, token, correctAnswer, questionImageLink } = req.body;
       const files = req.files;
 
       const options = [];
@@ -49,7 +49,6 @@ router.post(
 
       const newQuestionImage = files["questionImage"]?.[0]?.filename;
 
-      // UPDATE FLOW
       if (id) {
         const existing = await Question.findById(id);
         if (!existing) return res.status(404).send("Question not found");
@@ -57,8 +56,8 @@ router.post(
         existing.question = question;
         existing.correctAnswer = correctAnswer;
         existing.token = token;
+        existing.questionImageLink = questionImageLink || "";
 
-        // Handle question image removal or replacement
         if (req.body.removeQuestionImage === "true" && existing.questionImage) {
           const oldPath = path.join(__dirname, "..", "public", "uploads", existing.questionImage);
           if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
@@ -67,7 +66,6 @@ router.post(
           existing.questionImage = newQuestionImage;
         }
 
-        // Handle option text, new image, or removal
         for (let i = 0; i < 4; i++) {
           const removeFlag = req.body[`removeOptionImage${i}`];
           existing.options[i].text = options[i].text;
@@ -82,10 +80,7 @@ router.post(
         }
 
         await existing.save();
-      }
-
-      // CREATE FLOW
-      else {
+      } else {
         const finalOptions = options.map(opt => ({
           text: opt.text,
           image: opt.image
@@ -94,6 +89,7 @@ router.post(
         await Question.create({
           question,
           questionImage: newQuestionImage || null,
+          questionImageLink: questionImageLink || "",
           options: finalOptions,
           correctAnswer,
           token
@@ -107,5 +103,6 @@ router.post(
     }
   }
 );
+
 
 module.exports = router;

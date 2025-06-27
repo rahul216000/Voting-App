@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Voting</title>
+    <title>Magic Quiz</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
     <style>
         :root {
@@ -178,6 +178,94 @@
                 width: 95%;
             }
         }
+
+        .image-card-user {
+            background: var(--white);
+            border: 1px solid var(--secondary);
+            border-radius: var(--radius);
+            padding: 15px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            margin: 1rem auto;
+            max-width: 260px;
+        }
+
+        .image-card-user img {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: var(--radius);
+            object-fit: contain;
+            box-shadow: var(--shadow);
+        }
+
+        .option-image-card {
+            background: var(--white);
+            border: 1px solid var(--secondary);
+            border-radius: var(--radius);
+            padding: 10px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            margin-top: 10px;
+            max-width: 180px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .option-image-card img {
+            max-width: 100%;
+            max-height: 120px;
+            border-radius: var(--radius);
+            object-fit: contain;
+            box-shadow: var(--shadow);
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .option-card {
+            background: var(--white);
+            border: 1px solid var(--secondary);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 600;
+            color: var(--dark-text);
+            position: relative;
+        }
+
+        .option-card:hover {
+            background-color: var(--light-text);
+        }
+
+        .option-card img {
+            max-width: 100%;
+            max-height: 150px;
+            border-radius: var(--radius);
+            margin-bottom: 0.5rem;
+            object-fit: contain;
+            box-shadow: var(--shadow);
+        }
+
+        .options input[type="radio"] {
+            display: none;
+        }
+
+        .options input[type="radio"]:checked+label {
+            border: 2px solid var(--primary);
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        @media (max-width: 600px) {
+            .options {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 
@@ -205,21 +293,38 @@
                 <%= latest?.question || "No question" %>
             </span>
             <% if (latest?.questionImage) { %>
-                <img src="/uploads/<%= latest.questionImage %>">
+                <div class="image-card-user">
+                    <% if (latest?.questionImageLink) { %>
+                        <a href="<%= latest.questionImageLink %>" target="_blank">
+                            <img src="/uploads/<%= latest.questionImage %>">
+                        </a>
+                        <% } else { %>
+                            <img src="/uploads/<%= latest.questionImage %>">
+                            <% } %>
+                </div>
                 <% } %>
+
+
         </div>
         <div class="options">
             <% latest.options.forEach((opt, i)=> {
                 const letter = String.fromCharCode(65 + i); %>
                 <input type="radio" id="opt<%= i %>" name="answer" value="<%= letter %>" data-text="<%= opt.text %>">
-                <label for="opt<%= i %>">
-                    <%= letter %>) <%= opt.text %>
-                            <% if (opt.image) { %><br><img src="/uploads/<%= opt.image %>"
-                                    style="max-width:100px; display:block; margin:5px auto;">
-                                <% } %>
+                <label class="option-card" for="opt<%= i %>">
+                    <% if (opt.image) { %>
+                        <img src="/uploads/<%= opt.image %>" alt="Option Image">
+                        <div>
+                            <%= letter %>) <%= opt.text %>
+                        </div>
+                        <% } else { %>
+                            <div>
+                                <%= letter %>) <%= opt.text %>
+                            </div>
+                            <% } %>
                 </label>
                 <% }) %>
         </div>
+
     </div>
 
     <div class="overlay" id="overlay">

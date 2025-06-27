@@ -226,6 +226,11 @@
           </label>
     </div>
 
+    <label>Question Image Link (Optional)</label>
+    <input type="text" name="questionImageLink" placeholder="https://example.com"
+      value="<%= latest?.questionImageLink || '' %>">
+
+
 
     <% ["A", "B" , "C" , "D" ].forEach((opt, i)=> {
       const option = latest?.options?.[i] || {}; %>
@@ -282,11 +287,11 @@
     }
 
     function removeImage(imgId, hiddenInputId) {
-    const img = document.getElementById(imgId);
-    const hiddenInput = document.getElementById(hiddenInputId);
-    if (img) img.style.display = "none";
-    if (hiddenInput) hiddenInput.value = "true";
-  }
+      const img = document.getElementById(imgId);
+      const hiddenInput = document.getElementById(hiddenInputId);
+      if (img) img.style.display = "none";
+      if (hiddenInput) hiddenInput.value = "true";
+    }
   </script>
 </body>
 

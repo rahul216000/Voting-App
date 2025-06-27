@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const QuestionSchema = new mongoose.Schema({
   question: String,
   questionImage: String,
+  questionImageLink: String, // ✅ NEW FIELD
   options: [
     {
       text: String,
