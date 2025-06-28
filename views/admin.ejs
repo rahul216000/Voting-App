@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+  <meta charset="UTF-8">
   <title>Admin Panel</title>
   <link rel="stylesheet" href="/style.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <style>
     :root {
       --primary: #5898b7;
@@ -13,7 +13,6 @@
       --background: #ececdf;
       --accent: #cbdea4;
       --dark-text: #2c3e50;
-      --light-text: #91b461;
       --white: #ffffff;
       --radius: 16px;
       --shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
@@ -115,73 +114,6 @@
       font-weight: bold;
     }
 
-    hr {
-      margin: 30px 0;
-      border: none;
-      height: 2px;
-      background-color: var(--secondary);
-      border-radius: 2px;
-    }
-
-    .option-heading {
-      text-align: center;
-      font-size: 1.2rem;
-      font-weight: bold;
-      color: var(--primary);
-      margin: 30px 0 10px;
-    }
-
-    @media (max-width: 600px) {
-      form {
-        width: 80%;
-        padding: 20px;
-      }
-
-      h1 {
-        font-size: 1.5rem;
-        text-align: center;
-        margin: 20px 0;
-      }
-
-      label {
-        font-size: 0.95rem;
-        margin-top: 12px;
-      }
-
-      input[type="text"],
-      select {
-        font-size: 0.95rem;
-        padding: 8px;
-      }
-
-      .image-card {
-        padding: 10px;
-        margin-top: 10px;
-      }
-
-      .image-card img {
-        max-width: 140px;
-        max-height: 100px;
-      }
-
-      .custom-file-btn {
-        padding: 6px 12px;
-        font-size: 0.9rem;
-      }
-
-      .option-heading {
-        font-size: 1rem;
-        margin: 20px 0 8px;
-      }
-
-      button {
-        padding: 12px;
-        font-size: 1rem;
-        margin-top: 25px;
-      }
-    }
-
-
     .remove-btn {
       margin-top: 10px;
       background-color: var(--accent);
@@ -198,100 +130,182 @@
       background-color: #f66;
       color: white;
     }
+
+    .option-block {
+      border-top: 2px solid var(--secondary);
+      padding-top: 15px;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 600px) {
+      form {
+        width: 85%;
+        padding: 20px;
+      }
+    }
   </style>
 </head>
 
 <body>
   <h1>Admin Panel</h1>
 
-  <form action="/admin/update" method="POST" enctype="multipart/form-data">
+  <form id="questionForm" action="/admin/update" method="POST" enctype="multipart/form-data">
     <input type="hidden" name="id" value="<%= latest?._id %>">
 
     <label>Question</label>
     <input type="text" name="question" required value="<%= latest?.question || '' %>">
 
-    <!-- Question Image Card -->
     <div class="image-card">
-      <img id="previewQuestionImage" src="<%= latest?.questionImage ? '/uploads/' + latest.questionImage : '' %>"
-        style="<%= latest?.questionImage ? '' : 'display:none;' %>">
+      <img id="previewQuestionImage" src="<%= latest?.questionImage ? '/uploads/' + latest.questionImage : '' %>" style="<%= latest?.questionImage ? '' : 'display:none;' %>">
       <% if (latest?.questionImage) { %>
-        <button type="button" class="remove-btn"
-          onclick="removeImage('previewQuestionImage', 'removeQuestionImage')">Remove Image</button>
+        <button type="button" class="remove-btn" onclick="removeImage('previewQuestionImage', 'removeQuestionImage')">Remove Image</button>
         <input type="hidden" name="removeQuestionImage" id="removeQuestionImage" value="false">
-        <% } %>
-          <label class="custom-file-btn">
-            Choose Image for Question
-            <input type="file" name="questionImage" accept="image/*"
-              onchange="previewImage(this, 'previewQuestionImage')">
-          </label>
+      <% } %>
+      <label class="custom-file-btn">
+        Choose Image for Question
+        <input type="file" name="questionImage" accept="image/*" onchange="previewImage(this, 'previewQuestionImage')">
+      </label>
     </div>
 
     <label>Question Image Link (Optional)</label>
-    <input type="text" name="questionImageLink" placeholder="https://example.com"
-      value="<%= latest?.questionImageLink || '' %>">
+    <input type="text" name="questionImageLink" value="<%= latest?.questionImageLink || '' %>">
 
+    <div id="optionsContainer"></div>
+    <button type="button" onclick="addOption()">Add Option</button>
 
+    <label>Correct Answer</label>
+    <select name="correctAnswer" id="correctAnswerSelect">
+      <option value="">--Select--</option>
+    </select>
 
-    <% ["A", "B" , "C" , "D" ].forEach((opt, i)=> {
-      const option = latest?.options?.[i] || {}; %>
+    <label>Magic Coins</label>
+    <input type="text" name="token"  value="<%= latest?.token || '' %>">
 
-      <hr>
-      <div class="option-heading">Option <%= opt %>
-      </div>
-      <input type="text" name="optionText<%= i %>" value="<%= option.text || '' %>">
-
-      <div class="image-card">
-        <img id="previewOptionImage<%= i %>" src="<%= option.image ? '/uploads/' + option.image : '' %>"
-          style="<%= option.image ? '' : 'display:none;' %>">
-        <% if (option.image) { %>
-          <button type="button" class="remove-btn"
-            onclick="removeImage('previewOptionImage<%= i %>', 'removeOptionImage<%= i %>')">Remove Image</button>
-          <input type="hidden" name="removeOptionImage<%= i %>" id="removeOptionImage<%= i %>" value="false">
-          <% } %>
-            <label class="custom-file-btn">
-              Choose Image for Option <%= opt %>
-                <input type="file" name="optionImage<%= i %>" accept="image/*"
-                  onchange="previewImage(this, 'previewOptionImage<%= i %>')">
-            </label>
-      </div>
-
-      <% }) %>
-
-        <label>Correct Answer</label>
-        <select name="correctAnswer" required>
-          <option value="">--Select--</option>
-          <% ["A", "B" , "C" , "D" ].forEach(opt=> { %>
-            <option value="<%= opt %>" <%=latest?.correctAnswer===opt ? "selected" : "" %>>Option <%= opt %>
-            </option>
-            <% }) %>
-        </select>
-
-        <label>Magic Coins</label>
-        <input type="text" name="token" required value="<%= latest?.token || '' %>">
-
-        <button type="submit">Update</button>
+    <button type="submit">Update</button>
   </form>
 
   <script>
-    function previewImage(input, previewId) {
-      const file = input.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          const img = document.getElementById(previewId);
-          img.src = e.target.result;
-          img.style.display = "block";
-        };
-        reader.readAsDataURL(file);
-      }
+    const existingOptions = <%- JSON.stringify(latest?.options || []) %>;
+    const correctAns = "<%= latest?.correctAnswer || '' %>";
+  </script>
+  <script>
+    let optionCount = 0;
+
+function previewImage(input, previewId) {
+  const file = input.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const img = document.getElementById(previewId);
+      img.src = e.target.result;
+      img.style.display = "block";
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
+function removeImage(imgId, hiddenInputId) {
+  const img = document.getElementById(imgId);
+  const hiddenInput = document.getElementById(hiddenInputId);
+  if (img) img.style.display = "none";
+  if (hiddenInput) hiddenInput.value = "true";
+}
+
+function removeOption(index) {
+  const block = document.getElementById("option-block-" + index);
+  if (block) block.remove();
+  updateOptionLabels();
+}
+
+function updateOptionLabels() {
+  const select = document.getElementById("correctAnswerSelect");
+  const container = document.getElementById("optionsContainer");
+  const blocks = Array.from(container.querySelectorAll(".option-block"));
+  select.innerHTML = '<option value="">--Select--</option>'; // Reset
+
+  blocks.forEach((block, newIndex) => {
+    const letter = String.fromCharCode(65 + newIndex);
+    block.dataset.index = newIndex;
+    block.id = `option-block-${newIndex}`;
+
+    const label = block.querySelector("label");
+    const textInput = block.querySelector("input[type='text']");
+    const fileInput = block.querySelector("input[type='file']");
+    const img = block.querySelector("img");
+    const hiddenInput = block.querySelector("input[type='hidden']");
+    const removeBtn = block.querySelector("button.remove-btn");
+
+    // Update label text
+    if (label) label.textContent = `Option ${letter} Text`;
+    if (textInput) textInput.name = `optionText${newIndex}`;
+
+    if (img) img.id = `previewOptionImage${newIndex}`;
+
+    if (fileInput) {
+      fileInput.name = `optionImage${newIndex}`;
+      fileInput.setAttribute("onchange", `previewImage(this, 'previewOptionImage${newIndex}')`);
     }
 
-    function removeImage(imgId, hiddenInputId) {
-      const img = document.getElementById(imgId);
-      const hiddenInput = document.getElementById(hiddenInputId);
-      if (img) img.style.display = "none";
-      if (hiddenInput) hiddenInput.value = "true";
+    if (hiddenInput) {
+      hiddenInput.name = `removeOptionImage${newIndex}`;
+      hiddenInput.id = `removeOptionImage${newIndex}`;
     }
+
+    if (removeBtn) {
+      removeBtn.setAttribute("onclick", `removeOption(${newIndex})`);
+    }
+
+    const option = document.createElement("option");
+    option.value = letter;
+    option.textContent = `Option ${letter}`;
+    if (letter === correctAns) option.selected = true;
+    select.appendChild(option);
+  });
+
+  optionCount = blocks.length;
+}
+
+function addOption(opt = {}) {
+  const i = optionCount;
+  const letter = String.fromCharCode(65 + i);
+  const container = document.createElement("div");
+  container.className = "option-block";
+  container.id = `option-block-${i}`;
+  container.dataset.index = i;
+
+  const hasImage = opt.image ? true : false;
+  const imgSrc = hasImage ? `/uploads/${opt.image}` : '';
+  const imgDisplay = hasImage ? '' : 'display:none';
+
+  container.innerHTML = `
+    <label>Option ${letter} Text</label>
+    <input type="text" name="optionText${i}" value="${opt.text || ''}">
+
+    <div class="image-card">
+      <img id="previewOptionImage${i}" src="${imgSrc}" style="${imgDisplay}">
+      <input type="hidden" name="removeOptionImage${i}" id="removeOptionImage${i}" value="false">
+
+      <button type="button" class="remove-btn" onclick="removeImage('previewOptionImage${i}', 'removeOptionImage${i}')">Remove Image</button>
+
+      <label class="custom-file-btn">
+        Choose Image for Option ${letter}
+        <input type="file" name="optionImage${i}" accept="image/*" onchange="previewImage(this, 'previewOptionImage${i}')">
+      </label>
+    </div>
+
+    <button type="button" class="remove-btn" onclick="removeOption(${i})">Remove Option</button>
+  `;
+
+  document.getElementById("optionsContainer").appendChild(container);
+  optionCount++;
+  updateOptionLabels();
+}
+
+// Load existing options on page load
+window.addEventListener("DOMContentLoaded", () => {
+  existingOptions.forEach(opt => addOption(opt));
+});
+
   </script>
 </body>
 

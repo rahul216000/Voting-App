@@ -266,6 +266,30 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        .site-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .site-logo {
+            height: auto;
+            max-width: 70px;
+            object-fit: contain;
+        }
+
+        @media (max-width: 600px) {
+            .site-logo {
+                height: auto;
+                max-width: 50px;
+                object-fit: contain;
+            }
+
+            .site-name {
+                font-size: 1.2rem;
+            }
+        }
     </style>
 </head>
 
@@ -273,7 +297,12 @@
 
 
     <div class="top-menu">
-        <div class="site-name">Magic Quiz</div>
+        <div class="site-brand">
+            <img src="/logo.png" alt="Logo" class="site-logo" />
+            <span class="site-name">Magic Quiz</span>
+        </div>
+
+
         <div class="token-display" onclick="window.location.href='/wallet'">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-coin"
                 viewBox="0 0 16 16">
@@ -307,23 +336,24 @@
 
         </div>
         <div class="options">
-            <% latest.options.forEach((opt, i)=> {
-                const letter = String.fromCharCode(65 + i); %>
+            <% if (latest?.options && latest.options.length> 0) {
+                latest.options.forEach((opt, i) => {
+                const letter = String.fromCharCode(65 + i);
+                %>
                 <input type="radio" id="opt<%= i %>" name="answer" value="<%= letter %>" data-text="<%= opt.text %>">
                 <label class="option-card" for="opt<%= i %>">
                     <% if (opt.image) { %>
-                        <img src="/uploads/<%= opt.image %>" alt="Option Image">
-                        <div>
-                            <%= letter %>) <%= opt.text %>
-                        </div>
-                        <% } else { %>
+                        <img src="/uploads/<%= opt.image %>" alt="Option <%= letter %>">
+                        <% } %>
                             <div>
                                 <%= letter %>) <%= opt.text %>
                             </div>
-                            <% } %>
                 </label>
-                <% }) %>
+                <% }); } else { %>
+                    <p>No options available.</p>
+                    <% } %>
         </div>
+
 
     </div>
 

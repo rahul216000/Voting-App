@@ -5,7 +5,7 @@ const path = require("path");
 const fs = require("fs");
 const Question = require("../models/Question");
 
-// Storage configuration
+// Multer Storage config
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const dir = path.join(__dirname, "..", "public", "uploads");
@@ -25,84 +25,102 @@ router.get("/", async (req, res) => {
   res.render("admin", { latest });
 });
 
-// POST Create or Update Question
-router.post(
-  "/update",
-  upload.fields([
-    { name: "questionImage", maxCount: 1 },
-    { name: "optionImage0", maxCount: 1 },
-    { name: "optionImage1", maxCount: 1 },
-    { name: "optionImage2", maxCount: 1 },
-    { name: "optionImage3", maxCount: 1 }
-  ]),
-  async (req, res) => {
-    try {
-      const { id, question, token, correctAnswer, questionImageLink } = req.body;
-      const files = req.files;
+// POST Update or Create
+router.post("/update", upload.any(), async (req, res) => {
+  try {
+    const { id, question, token, correctAnswer, questionImageLink } = req.body;
+    const files = req.files;
 
-      const options = [];
-      for (let i = 0; i < 4; i++) {
-        const text = req.body[`optionText${i}`];
-        const newImage = files[`optionImage${i}`]?.[0]?.filename;
-        options.push({ text, image: newImage || null });
+    // Parse dynamic options
+    const options = [];
+    let index = 0;
+
+    while (req.body[`optionText${index}`] !== undefined) {
+      const text = req.body[`optionText${index}`];
+      const removeFlag = req.body[`removeOptionImage${index}`];
+      const fileObj = files.find(f => f.fieldname === `optionImage${index}`);
+      const image = fileObj ? fileObj.filename : null;
+
+      options.push({
+        index,
+        text,
+        image,
+        removeFlag
+      });
+
+      index++;
+    }
+
+    const questionImageFile = files.find(f => f.fieldname === "questionImage");
+    const newQuestionImage = questionImageFile ? questionImageFile.filename : null;
+
+    if (id) {
+      const existing = await Question.findById(id);
+      if (!existing) return res.status(404).send("Question not found");
+
+      existing.question = question;
+      existing.token = token;
+      existing.correctAnswer = correctAnswer;
+      existing.questionImageLink = questionImageLink || "";
+
+      // Handle question image
+      if (req.body.removeQuestionImage === "true" && existing.questionImage) {
+        const oldPath = path.join(__dirname, "..", "public", "uploads", existing.questionImage);
+        if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+        existing.questionImage = null;
+      } else if (newQuestionImage) {
+        existing.questionImage = newQuestionImage;
       }
 
-      const newQuestionImage = files["questionImage"]?.[0]?.filename;
+      // Handle options and images safely
+      const updatedOptions = [];
 
-      if (id) {
-        const existing = await Question.findById(id);
-        if (!existing) return res.status(404).send("Question not found");
+      for (let opt of options) {
+        let finalImage = null;
+        const prevOpt = existing.options?.[opt.index];
 
-        existing.question = question;
-        existing.correctAnswer = correctAnswer;
-        existing.token = token;
-        existing.questionImageLink = questionImageLink || "";
-
-        if (req.body.removeQuestionImage === "true" && existing.questionImage) {
-          const oldPath = path.join(__dirname, "..", "public", "uploads", existing.questionImage);
-          if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
-          existing.questionImage = null;
-        } else if (newQuestionImage) {
-          existing.questionImage = newQuestionImage;
-        }
-
-        for (let i = 0; i < 4; i++) {
-          const removeFlag = req.body[`removeOptionImage${i}`];
-          existing.options[i].text = options[i].text;
-
-          if (removeFlag === "true" && existing.options[i].image) {
-            const oldPath = path.join(__dirname, "..", "public", "uploads", existing.options[i].image);
+        if (opt.removeFlag === "true") {
+          // Remove old image
+          if (prevOpt?.image) {
+            const oldPath = path.join(__dirname, "..", "public", "uploads", prevOpt.image);
             if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
-            existing.options[i].image = null;
-          } else if (options[i].image) {
-            existing.options[i].image = options[i].image;
           }
+          finalImage = null;
+        } else {
+          finalImage = opt.image || (prevOpt?.image || null);
         }
 
-        await existing.save();
-      } else {
-        const finalOptions = options.map(opt => ({
+        updatedOptions.push({
           text: opt.text,
-          image: opt.image
-        }));
-
-        await Question.create({
-          question,
-          questionImage: newQuestionImage || null,
-          questionImageLink: questionImageLink || "",
-          options: finalOptions,
-          correctAnswer,
-          token
+          image: finalImage
         });
       }
 
-      res.redirect("/admin");
-    } catch (err) {
-      console.error("Error saving question:", err);
-      res.status(500).send("Failed to save question.");
-    }
-  }
-);
+      existing.options = updatedOptions;
 
+      await existing.save();
+    } else {
+      // New question
+      const finalOptions = options.map(opt => ({
+        text: opt.text,
+        image: opt.image || null
+      }));
+
+      await Question.create({
+        question,
+        token,
+        correctAnswer,
+        questionImage: newQuestionImage || null,
+        questionImageLink: questionImageLink || "",
+        options: finalOptions
+      });
+    }
+
+    res.redirect("/admin");
+  } catch (err) {
+    console.error("Error updating question:", err);
+    res.status(500).send("Internal Server Error");
+  }
+});
 
 module.exports = router;

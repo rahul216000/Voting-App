@@ -259,12 +259,40 @@
         align-items: center;
       }
     }
+
+    .site-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .site-logo {
+            height: auto;
+            max-width: 70px;
+            object-fit: contain;
+        }
+
+        @media (max-width: 600px) {
+            .site-logo {
+                height: auto;
+                max-width: 50px;
+                object-fit: contain;
+            }
+
+            .site-name {
+                font-size: 1.2rem;
+            }
+        }
+
   </style>
 </head>
 
 <body>
   <div class="top-menu">
-    <div class="site-name" onclick="window.location.href='/'">Magic Quiz</div>
+    <div class="site-brand" onclick="window.location.href='/'">
+            <img src="/logo.png" alt="Logo" class="site-logo" />
+            <span class="site-name">Magic Quiz</span>
+        </div>
     <div class="token-display">
       <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
         <path
