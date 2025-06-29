@@ -292,60 +292,59 @@
         }
 
         .toggle-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    margin-top: 1rem;
-    font-weight: 600;
-    color: var(--dark-text);
-}
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            font-weight: 600;
+            color: var(--dark-text);
+        }
 
-.switch {
-    position: relative;
-    display: inline-block;
-    width: 60px;
-    height: 32px;
-}
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 32px;
+        }
 
-.switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
 
-.slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: var(--secondary);
-    transition: 0.4s;
-    border-radius: var(--radius);
-}
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--secondary);
+            transition: 0.4s;
+            border-radius: var(--radius);
+        }
 
-.slider:before {
-    position: absolute;
-    content: "";
-    height: 24px;
-    width: 24px;
-    left: 4px;
-    bottom: 4px;
-    background-color: var(--primary);
-    transition: 0.4s;
-    border-radius: 50%;
-}
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 24px;
+            width: 24px;
+            left: 4px;
+            bottom: 4px;
+            background-color: var(--primary);
+            transition: 0.4s;
+            border-radius: 50%;
+        }
 
-.switch input:checked + .slider {
-    background-color: var(--accent);
-}
+        .switch input:checked+.slider {
+            background-color: var(--accent);
+        }
 
-.switch input:checked + .slider:before {
-    transform: translateX(28px);
-}
-
+        .switch input:checked+.slider:before {
+            transform: translateX(28px);
+        }
     </style>
 </head>
 
@@ -354,8 +353,8 @@
 
     <div class="top-menu">
         <div class="site-brand">
-            <img src="/logo.png" alt="Logo" class="site-logo" />
-            <span class="site-name">Magic Quiz</span>
+            <!-- <img src="/logo.png" alt="Logo" class="site-logo" /> -->
+            <span class="site-name">Magic Voting</span>
         </div>
 
 
@@ -442,7 +441,6 @@
         document.getElementById("tokenCount").textContent = tokens;
         localStorage.setItem('tokens', tokens);
         const tokenCost = <%= parseInt(latest?.token || 0) %>;
-        const correctAnswer = "<%= latest?.correctAnswer %>";
 
         let selectedOption = "";
         let selectedText = "";
@@ -451,37 +449,30 @@
             r.addEventListener('change', () => {
                 selectedOption = r.value;
                 selectedText = r.dataset.text;
-                document.getElementById("popupText").textContent = `You selected option ${selectedOption}, answer ${selectedText}. Do you want to compete for the jackpot for ${tokenCost} coins?`;
+                document.getElementById("popupText").textContent =
+                    `You selected option ${selectedOption}, "${selectedText}". Do you want to compete for the jackpot for ${tokenCost} coins?`;
                 document.getElementById("overlay").classList.add("show");
             });
         });
 
         function handleJackpotChoice() {
-            const wantJackpot = document.getElementById('jackpotToggle').checked ? "yes" : "no";
-
+            const wantJackpot = document.getElementById('jackpotToggle').checked;
             let result = "";
 
-            if (wantJackpot === "yes") {
+            if (wantJackpot) {
                 if (tokens < tokenCost) {
-                    result = `Not enough balance. This question needs ${tokenCost} coins.`;
+                    result = `Not enough balance. This vote needs ${tokenCost} coins.`;
                 } else {
                     tokens -= tokenCost;
                     localStorage.setItem('tokens', tokens);
-
                     document.getElementById("tokenCount").textContent = tokens;
 
-                    if (selectedOption === correctAnswer) {
-                        result = `Answer ${selectedOption} is the correct answer. You are qualified to win the jackpot.`;
-                    } else {
-                        result = `The correct answer is ${correctAnswer}. Thank you for your participation.`;
-                    }
+                    const fakeVotes = Math.floor(Math.random() * 500 + 50);
+                    result = `Thank you for voting. Option ${selectedOption} received ${fakeVotes} votes.`;
                 }
             } else {
-                if (selectedOption === correctAnswer) {
-                    result = `Answer ${selectedOption} is the correct answer. You are not participating in the contest for the jackpot.`;
-                } else {
-                    result = `The correct answer is ${correctAnswer}. Thank you for your participation.`;
-                }
+                const fakeVotes = Math.floor(Math.random() * 500 + 50);
+                result = `Thank you for voting. Option ${selectedOption} received ${fakeVotes} votes.`;
             }
 
             document.getElementById("overlay").classList.remove("show");
@@ -494,18 +485,14 @@
             document.querySelectorAll('input[name="answer"]').forEach(r => r.checked = false);
         }
 
-
         const params = new URLSearchParams(window.location.search);
         if (params.get("clear") === "true") {
             localStorage.removeItem("tokens");
-            // Add any other keys you use
-            console.log("Tokens cleared from localStorage");
-
-            // Redirect to the same site without query parameters
             const url = window.location.origin + window.location.pathname;
-            window.location.replace(url); // replaces the current history entry
+            window.location.replace(url);
         }
     </script>
+
 </body>
 
 </html>

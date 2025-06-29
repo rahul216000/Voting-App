@@ -31,5 +31,8 @@ app.use("/uploads", express.static(path.join(__dirname, "public", "uploads")));
 // Routes
 app.use("/admin", require("./routes/admin"));
 app.use("/", require("./routes/user"));
+app.use("/admin-voting", require("./routes/voting-admin"));
+app.use("/voting", require("./routes/voting-user"));
+
 
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
