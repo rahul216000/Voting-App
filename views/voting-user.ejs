@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Magic Quiz</title>
+    <title>Magic Voting</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
     <style>
         :root {
@@ -345,6 +345,30 @@
         .switch input:checked+.slider:before {
             transform: translateX(28px);
         }
+
+        .progress-bar-container {
+    width: 100%;
+    background-color: #ddd;
+    border-radius: 12px;
+    height: 18px;
+    margin-top: 0.5rem;
+    overflow: hidden;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background-color: var(--primary);
+    width: 0%;
+    transition: width 0.6s ease;
+    text-align: right;
+    padding-right: 6px;
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 18px;
+}
+
     </style>
 </head>
 
@@ -390,24 +414,36 @@
 
 
         </div>
-        <div class="options">
-            <% if (latest?.options && latest.options.length> 0) {
-                latest.options.forEach((opt, i) => {
-                const letter = String.fromCharCode(65 + i);
-                %>
-                <input type="radio" id="opt<%= i %>" name="answer" value="<%= letter %>" data-text="<%= opt.text %>">
-                <label class="option-card" for="opt<%= i %>">
-                    <% if (opt.image) { %>
-                        <img src="/uploads/<%= opt.image %>" alt="Option <%= letter %>">
-                        <% } %>
-                            <div>
-                                <%= letter %>) <%= opt.text %>
-                            </div>
-                </label>
-                <% }); } else { %>
-                    <p>No options available.</p>
-                    <% } %>
-        </div>
+<div class="options">
+  <% if (latest?.options && latest.options.length > 0) {
+    latest.options.forEach((opt, i) => {
+      const letter = String.fromCharCode(65 + i);
+  %>
+    <input
+      type="radio"
+      id="opt<%= i %>"
+      name="answer"
+      value="<%= letter %>"
+      data-text="<%= opt.text %>"
+      data-index="<%= i %>"
+    />
+    <label class="option-card" for="opt<%= i %>">
+      <% if (opt.image) { %>
+        <img src="/uploads/<%= opt.image %>" alt="Option <%= letter %>" />
+      <% } %>
+      <div>
+        <%= letter %>) <%= opt.text %>
+      </div>
+      <div class="progress-bar-container">
+        <div class="progress-bar-fill" id="bar<%= i %>">0%</div>
+      </div>
+    </label>
+  <% }); } else { %>
+    <p>No options available.</p>
+  <% } %>
+</div>
+
+
 
 
     </div>
@@ -436,62 +472,79 @@
         </div>
     </div>
 
-    <script>
-        let tokens = parseInt(localStorage.getItem('tokens') ?? 1000);
-        document.getElementById("tokenCount").textContent = tokens;
+<script>
+  let tokens = parseInt(localStorage.getItem('tokens') ?? 1000);
+  document.getElementById("tokenCount").textContent = tokens;
+  localStorage.setItem('tokens', tokens);
+  const tokenCost = <%= parseInt(latest?.token || 0) %>;
+
+  let selectedOption = "";
+  let selectedText = "";
+  let selectedIndex = -1;
+
+  document.querySelectorAll('input[name="answer"]').forEach(r => {
+    r.addEventListener('change', () => {
+      selectedOption = r.value;
+      selectedText = r.dataset.text;
+      selectedIndex = parseInt(r.dataset.index);
+      document.getElementById("popupText").textContent =
+        `You selected option ${selectedOption}, "${selectedText}". Do you want to compete for the jackpot for ${tokenCost} coins?`;
+      document.getElementById("overlay").classList.add("show");
+    });
+  });
+
+  function handleJackpotChoice() {
+    const wantJackpot = document.getElementById('jackpotToggle').checked;
+    let result = "";
+
+    if (wantJackpot && tokens < tokenCost) {
+      result = `Not enough balance. This vote needs ${tokenCost} coins.`;
+    } else {
+      if (wantJackpot) {
+        tokens -= tokenCost;
         localStorage.setItem('tokens', tokens);
-        const tokenCost = <%= parseInt(latest?.token || 0) %>;
+        document.getElementById("tokenCount").textContent = tokens;
+      }
 
-        let selectedOption = "";
-        let selectedText = "";
+      // Simulate votes
+      const totalOptions = document.querySelectorAll('.progress-bar-fill').length;
+      let fakeVotes = Array.from({ length: totalOptions }, () => Math.floor(Math.random() * 200 + 50));
 
-        document.querySelectorAll('input[name="answer"]').forEach(r => {
-            r.addEventListener('change', () => {
-                selectedOption = r.value;
-                selectedText = r.dataset.text;
-                document.getElementById("popupText").textContent =
-                    `You selected option ${selectedOption}, "${selectedText}". Do you want to compete for the jackpot for ${tokenCost} coins?`;
-                document.getElementById("overlay").classList.add("show");
-            });
-        });
+      // Total and percentage
+      const total = fakeVotes.reduce((a, b) => a + b, 0);
+      let percentages = fakeVotes.map(v => Math.round((v / total) * 100));
 
-        function handleJackpotChoice() {
-            const wantJackpot = document.getElementById('jackpotToggle').checked;
-            let result = "";
-
-            if (wantJackpot) {
-                if (tokens < tokenCost) {
-                    result = `Not enough balance. This vote needs ${tokenCost} coins.`;
-                } else {
-                    tokens -= tokenCost;
-                    localStorage.setItem('tokens', tokens);
-                    document.getElementById("tokenCount").textContent = tokens;
-
-                    const fakeVotes = Math.floor(Math.random() * 500 + 50);
-                    result = `Thank you for voting. Option ${selectedOption} received ${fakeVotes} votes.`;
-                }
-            } else {
-                const fakeVotes = Math.floor(Math.random() * 500 + 50);
-                result = `Thank you for voting. Option ${selectedOption} received ${fakeVotes} votes.`;
-            }
-
-            document.getElementById("overlay").classList.remove("show");
-            document.getElementById("resultText").textContent = result;
-            document.getElementById("resultOverlay").classList.add("show");
+      // Update progress bars
+      percentages.forEach((percent, i) => {
+        const bar = document.getElementById(`bar${i}`);
+        if (bar) {
+          bar.style.width = `${percent}%`;
+          bar.textContent = `${percent}%`;
         }
+      });
 
-        function closeResult() {
-            document.getElementById("resultOverlay").classList.remove("show");
-            document.querySelectorAll('input[name="answer"]').forEach(r => r.checked = false);
-        }
+      result = `Thank you for voting. Option ${selectedOption} received ${fakeVotes[selectedIndex]} votes (${percentages[selectedIndex]}%).`;
+    }
 
-        const params = new URLSearchParams(window.location.search);
-        if (params.get("clear") === "true") {
-            localStorage.removeItem("tokens");
-            const url = window.location.origin + window.location.pathname;
-            window.location.replace(url);
-        }
-    </script>
+    document.getElementById("overlay").classList.remove("show");
+    document.getElementById("resultText").textContent = result;
+    document.getElementById("resultOverlay").classList.add("show");
+  }
+
+  function closeResult() {
+    document.getElementById("resultOverlay").classList.remove("show");
+    document.querySelectorAll('input[name="answer"]').forEach(r => r.checked = false);
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("clear") === "true") {
+    localStorage.removeItem("tokens");
+    const url = window.location.origin + window.location.pathname;
+    window.location.replace(url);
+  }
+</script>
+
+
 
 </body>
 
