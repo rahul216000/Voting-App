@@ -39,4 +39,8 @@ app.use('/admin-magic-brand', require('./routes/adminMagicBrand'));
 app.use('/magic-brand', require('./routes/magicBrand'));
 
 
+app.use('/admin-shopping', require('./routes/admin-shopping'));
+app.use('/shopping', require('./routes/shopping'));
+
+
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
