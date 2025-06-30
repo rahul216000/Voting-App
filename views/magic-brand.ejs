@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Magic Brand</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+    <style>
+        :root {
+            --primary: #5898b7;
+            --secondary: #9dceda;
+            --background: #ececdf;
+            --accent: #cbdea4;
+            --dark-text: #2c3e50;
+            --white: #ffffff;
+            --radius: 16px;
+            --shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background);
+            color: var(--dark-text);
+        }
+
+        .top-menu {
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .site-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .token-display {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .carousel-container {
+            position: relative;
+            margin: 2rem auto;
+            width: 100%;
+            max-width: 700px;
+            overflow: hidden;
+        }
+
+        .carousel-track {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .product-card {
+            flex: 0 0 100%;
+            width: 100%;
+            padding: 1.5rem;
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            text-align: center;
+            white-space: normal;
+            scroll-snap-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .product-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .product-card img {
+            max-width: 100%;
+            height: 180px;
+            object-fit: contain;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 1rem;
+            cursor: pointer;
+        }
+
+        .product-description {
+            font-size: 0.95rem;
+            color: #555;
+            margin-bottom: 1rem;
+        }
+
+        .product-btn {
+            margin-top: 1rem;
+            padding: 10px 16px;
+            background-color: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: var(--radius);
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .product-btn:hover {
+            background-color: var(--dark-text);
+        }
+
+        .carousel-dots {
+            display: flex;
+            justify-content: center;
+            margin-top: 1.2rem;
+            gap: 0.5rem;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            background: var(--secondary);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .dot.active {
+            background: var(--primary);
+        }
+
+        @media (min-width: 768px) {
+            .carousel-container {
+                max-width: 600px;
+            }
+
+            .product-card {
+                height: auto;
+            }
+        }
+
+        .carousel-container {
+            position: relative;
+            margin: 2rem auto;
+            width: 100%;
+            max-width: 700px;
+            overflow: hidden;
+            touch-action: pan-y;
+        }
+
+        .carousel-track {
+            display: flex;
+            transition: transform 0.6s ease;
+            will-change: transform;
+        }
+
+        .product-card {
+            min-width: 100%;
+            max-width: 100%;
+            flex-shrink: 0;
+            padding: 1.5rem;
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .carousel-track::-webkit-scrollbar {
+            display: none;
+        }
+
+        .carousel-track {
+            -ms-overflow-style: none;
+            /* IE 10+ */
+            scrollbar-width: none;
+            /* Firefox */
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="top-menu">
+        <span class="site-name">Magic Brand</span>
+        <div class="token-display" onclick="window.location.href='/wallet'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-coin"
+                viewBox="0 0 16 16">
+                <path
+                    d="M5.5 9.511c.076.954.83 1.697 2.182 1.785V12h.6v-.709c1.4-.098 2.218-.846 2.218-1.932 0-.987-.626-1.496-1.745-1.76l-.473-.112V5.57c.6.068.982.396 1.074.85h1.052c-.076-.919-.864-1.638-2.126-1.716V4h-.6v.719c-1.195.117-2.01.836-2.01 1.853 0 .9.606 1.472 1.613 1.707l.397.098v2.034c-.615-.093-1.022-.43-1.114-.9z" />
+                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+                <path d="M8 13.5a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11m0 .5A6 6 0 1 0 8 2a6 6 0 0 0 0 12" />
+            </svg>
+            <span id="tokenCount">50</span>
+        </div>
+    </div>
+
+    <div class="carousel-container">
+        <div class="carousel-track" id="carouselTrack">
+            <% if (products.length===0) { %>
+                <p style="text-align:center; font-size:1.2rem;">No products available yet.</p>
+                <% } else { %>
+                    <% products.forEach((p, index)=> { %>
+                        <div class="product-card">
+                            <div class="product-title">
+                                <%= p.title %>
+                            </div>
+                            <% if (p.image) { %>
+                                <a href="<%= p.link %>" target="_blank">
+                                    <img src="<%= p.image %>" alt="<%= p.title %>" />
+                                </a>
+                                <% } %>
+                                    <% if (p.description) { %>
+                                        <div class="product-description">
+                                            <%= p.description %>
+                                        </div>
+                                        <% } %>
+                                            <a class="product-btn" href="<%= p.link %>" target="_blank">Go to
+                                                Product</a>
+                        </div>
+                        <% }) %>
+                            <% } %>
+        </div>
+
+        <% if (products.length> 1) { %>
+            <div class="carousel-dots" id="carouselDots">
+                <% products.forEach((_, i)=> { %>
+                    <span class="dot <% if (i === 0) { %> active <% } %>" data-index="<%= i %>"></span>
+                    <% }) %>
+            </div>
+            <% } %>
+    </div>
+
+
+
+
+    <script>
+        let tokens = parseInt(localStorage.getItem('tokens') ?? 1000);
+        document.getElementById("tokenCount").textContent = tokens;
+        localStorage.setItem('tokens', tokens);
+
+        const track = document.getElementById('carouselTrack');
+        const dots = document.querySelectorAll('#carouselDots .dot');
+        const totalSlides = dots.length;
+        let activeSlide = 0;
+
+        function updateCarousel(index) {
+            const slideWidth = track.offsetWidth;
+            track.style.transform = `translateX(-${index * slideWidth}px)`;
+            dots.forEach((d, i) => d.classList.toggle('active', i === index));
+            activeSlide = index;
+        }
+
+        dots.forEach((dot, i) => {
+            dot.addEventListener('click', () => {
+                updateCarousel(i);
+            });
+        });
+
+        // Optional: swipe support
+        let startX = 0;
+        track.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+        });
+
+        track.addEventListener('touchend', (e) => {
+            const diffX = e.changedTouches[0].clientX - startX;
+            if (Math.abs(diffX) > 50) {
+                if (diffX < 0 && activeSlide < totalSlides - 1) {
+                    updateCarousel(activeSlide + 1);
+                } else if (diffX > 0 && activeSlide > 0) {
+                    updateCarousel(activeSlide - 1);
+                }
+            }
+        });
+    </script>
+
+
+
+</body>
+
+</html>

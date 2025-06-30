@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Magic Brand Admin</title>
+    <link rel="stylesheet" href="/style.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+        :root {
+            --primary: #5898b7;
+            --secondary: #9dceda;
+            --background: #ececdf;
+            --accent: #cbdea4;
+            --dark-text: #2c3e50;
+            --white: #ffffff;
+            --radius: 16px;
+            --shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            background-color: var(--background);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: var(--dark-text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            margin: 30px 0 20px;
+            color: var(--primary);
+        }
+
+        form {
+            background-color: var(--white);
+            padding: 30px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            width: 90%;
+            max-width: 550px;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="url"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--secondary);
+            border-radius: var(--radius);
+            margin-top: 5px;
+            font-size: 1rem;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        button {
+            margin-top: 30px;
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: var(--white);
+            font-size: 1.1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: var(--accent);
+            color: var(--dark-text);
+            transform: scale(1.02);
+        }
+
+        .image-card {
+            background: var(--white);
+            border: 1px solid var(--secondary);
+            border-radius: var(--radius);
+            padding: 15px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            margin-top: 15px;
+        }
+
+        .image-card img {
+            max-width: 180px;
+            max-height: 140px;
+            display: block;
+            margin: 0 auto 10px;
+            border-radius: var(--radius);
+            object-fit: contain;
+            box-shadow: var(--shadow);
+        }
+
+        .custom-file-btn {
+            display: inline-block;
+            background-color: var(--primary);
+            color: white;
+            padding: 8px 16px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .remove-btn {
+            margin-top: 10px;
+            background-color: var(--accent);
+            border: none;
+            color: var(--dark-text);
+            padding: 6px 14px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .remove-btn:hover {
+            background-color: #f66;
+            color: white;
+        }
+
+        ul.product-list {
+            list-style: none;
+            padding: 0;
+            margin: 30px auto;
+            max-width: 600px;
+            width: 90%;
+        }
+
+        ul.product-list li {
+            background-color: var(--white);
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        ul.product-list li .title {
+            flex-grow: 1;
+            cursor: pointer;
+        }
+
+        .delete-btn {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .delete-btn:hover {
+            background-color: #c0392b;
+        }
+
+        @media (max-width: 600px) {
+            form {
+                width: 85%;
+                padding: 20px;
+            }
+        }
+
+        .deleteBtnAsForm {
+            display: inline-block;
+            margin-left: 10px;
+            all: unset;
+        }
+
+        .deleteBtnAsForm .delete-btn {
+            all: unset;
+            /* reset all inherited styles */
+            display: inline-block;
+            background-color: #e74c3c;
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: var(--radius);
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: none;
+            transition: background 0.3s ease;
+            font-size: 0.95rem;
+            text-align: center;
+            border: none;
+        }
+
+        .deleteBtnAsForm .delete-btn:hover {
+            background-color: #c0392b;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Magic Brand Admin</h1>
+
+    <form action="/admin-magic-brand/save" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="id" id="product-id" />
+        <input type="hidden" name="existingImage" id="existing-image" />
+
+        <label>Product Title</label>
+        <input type="text" name="title" id="product-title" required />
+
+        <label>Product Description (optional)</label>
+        <textarea name="description" id="product-description" rows="3"></textarea>
+
+        <label>Product Link</label>
+        <input type="url" name="link" id="product-link" required />
+
+        <div class="image-card">
+            <img id="previewImage" src="" style="display:none;" />
+            <label class="custom-file-btn">
+                Choose Product Image
+                <input type="file" name="image" id="product-image" accept="image/*" />
+            </label>
+        </div>
+
+        <button type="submit">Save Product</button>
+    </form>
+
+
+    <h2 style="margin-top: 40px;">Product List</h2>
+    <ul class="product-list">
+        <% products.forEach(p=> { %>
+            <li>
+                <span class="title" onclick='editProduct(<%- JSON.stringify(p) %>)'>
+                    <%= p.title %>
+                </span>
+                <form class="deleteBtnAsForm" action="/admin-magic-brand/delete" method="POST"
+                    onsubmit="return confirm('Delete this product?')">
+                    <input type="hidden" name="id" value="<%= p._id %>">
+                    <button class="delete-btn" type="submit">Delete</button>
+                </form>
+            </li>
+            <% }) %>
+    </ul>
+    <script>
+        // When file input changes, preview the selected image
+        document.getElementById("product-image").addEventListener("change", function () {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const img = document.getElementById("previewImage");
+                    img.src = e.target.result;
+                    img.style.display = "block";
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Populate form fields when editing an existing product
+        function editProduct(p) {
+            document.getElementById("product-id").value = p._id || "";
+            document.getElementById("product-title").value = p.title || "";
+            document.getElementById("product-description").value = p.description || "";
+            document.getElementById("product-link").value = p.link || "";
+            document.getElementById("existing-image").value = p.image || "";
+
+            const img = document.getElementById("previewImage");
+            if (p.image) {
+                img.src = p.image;
+                img.style.display = "block";
+            } else {
+                img.src = "";
+                img.style.display = "none";
+            }
+
+            // Clear file input to allow same file re-selection
+            document.getElementById("product-image").value = "";
+
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+    </script>
+
+</body>
+
+</html>
