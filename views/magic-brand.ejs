@@ -187,6 +187,29 @@
             scrollbar-width: none;
             /* Firefox */
         }
+
+        .carousel-container {
+    margin: 2rem auto;
+    width: 100%;
+    max-width: 700px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+}
+
+.carousel-track {
+    display: flex;
+    gap: 1rem;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    padding-bottom: 1rem;
+}
+
+.product-card {
+    flex: 0 0 100%;
+    scroll-snap-align: center;
+}
+
     </style>
 
 </head>
@@ -234,13 +257,13 @@
                             <% } %>
         </div>
 
-        <% if (products.length> 1) { %>
+        <!-- <% if (products.length> 1) { %>
             <div class="carousel-dots" id="carouselDots">
                 <% products.forEach((_, i)=> { %>
                     <span class="dot <% if (i === 0) { %> active <% } %>" data-index="<%= i %>"></span>
                     <% }) %>
             </div>
-            <% } %>
+            <% } %> -->
     </div>
 
 
