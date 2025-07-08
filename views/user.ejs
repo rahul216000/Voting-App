@@ -292,60 +292,70 @@
         }
 
         .toggle-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    margin-top: 1rem;
-    font-weight: 600;
-    color: var(--dark-text);
-}
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            font-weight: 600;
+            color: var(--dark-text);
+        }
 
-.switch {
-    position: relative;
-    display: inline-block;
-    width: 60px;
-    height: 32px;
-}
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 32px;
+        }
 
-.switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
 
-.slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: var(--secondary);
-    transition: 0.4s;
-    border-radius: var(--radius);
-}
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--secondary);
+            transition: 0.4s;
+            border-radius: var(--radius);
+        }
 
-.slider:before {
-    position: absolute;
-    content: "";
-    height: 24px;
-    width: 24px;
-    left: 4px;
-    bottom: 4px;
-    background-color: var(--primary);
-    transition: 0.4s;
-    border-radius: 50%;
-}
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 24px;
+            width: 24px;
+            left: 4px;
+            bottom: 4px;
+            background-color: var(--primary);
+            transition: 0.4s;
+            border-radius: 50%;
+        }
 
-.switch input:checked + .slider {
-    background-color: var(--accent);
-}
+        .switch input:checked+.slider {
+            background-color: var(--accent);
+        }
 
-.switch input:checked + .slider:before {
-    transform: translateX(28px);
-}
+        .switch input:checked+.slider:before {
+            transform: translateX(28px);
+        }
 
+        .logo-inline {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            max-width: 200px;
+            height: auto;
+            margin: 1rem auto;
+            display: block;
+            object-fit: contain;
+        }
     </style>
 </head>
 
@@ -374,23 +384,30 @@
 
     <div class="container">
         <div class="question" style="margin-bottom: 2rem;">
-            <span class="ques-text">
-                <%= latest?.question || "No question" %>
-            </span>
-            <% if (latest?.questionImage) { %>
-                <div class="image-card-user">
-                    <% if (latest?.questionImageLink) { %>
-                        <a href="<%= latest.questionImageLink %>" target="_blank">
-                            <img src="/uploads/<%= latest.questionImage %>">
-                        </a>
-                        <% } else { %>
-                            <img src="/uploads/<%= latest.questionImage %>">
-                            <% } %>
+
+            <% if (latest?.logo) { %>
+                <div class="">
+                    <img src="/uploads/<%= latest.logo %>" alt="Logo" class="logo-inline" />
                 </div>
                 <% } %>
 
+                    <span class="ques-text">
+                        <%= latest?.question || "No question" %>
+                    </span>
 
+                    <% if (latest?.questionImage) { %>
+                        <div class="image-card-user">
+                            <% if (latest?.questionImageLink) { %>
+                                <a href="<%= latest.questionImageLink %>" target="_blank">
+                                    <img src="/uploads/<%= latest.questionImage %>">
+                                </a>
+                                <% } else { %>
+                                    <img src="/uploads/<%= latest.questionImage %>">
+                                    <% } %>
+                        </div>
+                        <% } %>
         </div>
+
         <div class="options">
             <% if (latest?.options && latest.options.length> 0) {
                 latest.options.forEach((opt, i) => {
@@ -425,6 +442,16 @@
                 <span>Yes</span>
             </div>
 
+            <h2 id="popupText2"></h2>
+            <div class="toggle-container"  id="DigitalPopUpText" style="display: none;">
+                <span>No</span>
+                <label class="switch">
+                    <input type="checkbox" id="DigitalReward" checked>
+                    <span class="slider"></span>
+                </label>
+                <span>Yes</span>
+            </div>
+
             <button onclick="handleJackpotChoice()">OK</button>
         </div>
     </div>
@@ -432,7 +459,7 @@
     <div class="overlay" id="resultOverlay">
         <div class="popup">
             <h2 id="resultText"></h2>
-            <p>Remember: with each vote your chances for winning the jackpot are higher</p>
+            <!-- <p>Remember: with each vote your chances for winning the jackpot are higher</p> -->
             <button onclick="closeResult()">OK</button>
         </div>
     </div>
@@ -444,6 +471,9 @@
         const tokenCost = <%= parseInt(latest?.token || 0) %>;
         const correctAnswer = "<%= latest?.correctAnswer %>";
 
+        const mode = "<%= latest?.mode || 'JP' %>";
+        console.log("Mode is:", mode);
+
         let selectedOption = "";
         let selectedText = "";
 
@@ -451,13 +481,24 @@
             r.addEventListener('change', () => {
                 selectedOption = r.value;
                 selectedText = r.dataset.text;
-                document.getElementById("popupText").textContent = `You selected option ${selectedOption}, answer ${selectedText}. Do you want to compete for the jackpot for ${tokenCost} coins?`;
+
+                if (mode == "JP") {
+
+                    document.getElementById("popupText").textContent = `You selected option ${selectedOption}, answer ${selectedText}. Do you want to compete for the jackpot for ${tokenCost} coins?`;
+                } else {
+                    
+                    document.getElementById("DigitalPopUpText").style.display = "block"
+
+                    document.getElementById("popupText2").textContent = `You selected option ${selectedOption}, answer ${selectedText}. Do you want to compete for the jackpot for ${tokenCost} coins?`;
+                    document.getElementById("popupText").textContent = `You selected option ${selectedOption}, answer ${selectedText}. Do you want to win the special price: free vip plan for 3 months for ${tokenCost} coins?`;
+                }
                 document.getElementById("overlay").classList.add("show");
             });
         });
 
         function handleJackpotChoice() {
             const wantJackpot = document.getElementById('jackpotToggle').checked ? "yes" : "no";
+            // const wantDigital = document.getElementById('jackpotToggle').checked ? "yes" : "no";
 
             let result = "";
 
@@ -505,6 +546,9 @@
             const url = window.location.origin + window.location.pathname;
             window.location.replace(url); // replaces the current history entry
         }
+
+
+
     </script>
 </body>
 

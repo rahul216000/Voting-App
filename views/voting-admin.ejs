@@ -152,6 +152,19 @@
     <form id="votingForm" action="/admin-voting/update" method="POST" enctype="multipart/form-data">
         <input type="hidden" name="id" value="<%= latest?._id %>">
 
+            <label>Upload Logo</label>
+<div class="image-card">
+  <img id="previewLogo" src="<%= latest?.logo ? '/uploads/' + latest.logo : '' %>" style="<%= latest?.logo ? '' : 'display:none;' %>">
+  <% if (latest?.logo) { %>
+    <button type="button" class="remove-btn" onclick="removeImage('previewLogo', 'removeLogo')">Remove Logo</button>
+    <input type="hidden" name="removeLogo" id="removeLogo" value="false">
+  <% } %>
+  <label class="custom-file-btn">
+    Choose Logo Image
+    <input type="file" name="logo" accept="image/*" onchange="previewImage(this, 'previewLogo')">
+  </label>
+</div>
+
         <label>Voting Question</label>
         <input type="text" name="question" required value="<%= latest?.question || '' %>">
 
@@ -178,6 +191,12 @@
 
         <label>Magic Coins</label>
         <input type="text" name="token" value="<%= latest?.token || '' %>">
+        
+            <label>Select Mode</label>
+<select name="mode">
+  <option value="JP" <%= latest?.mode === 'JP' ? 'selected' : '' %>>JP</option>
+  <option value="DigitalReward" <%= latest?.mode === 'DigitalReward' ? 'selected' : '' %>>Digital Reward</option>
+</select>
 
         <button type="submit">Update</button>
     </form>

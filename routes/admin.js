@@ -28,7 +28,7 @@ router.get("/", async (req, res) => {
 // POST Update or Create
 router.post("/update", upload.any(), async (req, res) => {
   try {
-    const { id, question, token, correctAnswer, questionImageLink } = req.body;
+    const { id, question, token, correctAnswer, questionImageLink, mode } = req.body;
     const files = req.files;
 
     // Parse dynamic options
@@ -54,6 +54,9 @@ router.post("/update", upload.any(), async (req, res) => {
     const questionImageFile = files.find(f => f.fieldname === "questionImage");
     const newQuestionImage = questionImageFile ? questionImageFile.filename : null;
 
+    const logoFile = files.find(f => f.fieldname === "logo");
+    const newLogo = logoFile ? logoFile.filename : null;
+
     if (id) {
       const existing = await Question.findById(id);
       if (!existing) return res.status(404).send("Question not found");
@@ -62,6 +65,7 @@ router.post("/update", upload.any(), async (req, res) => {
       existing.token = token;
       existing.correctAnswer = correctAnswer;
       existing.questionImageLink = questionImageLink || "";
+      existing.mode = mode || "";
 
       // Handle question image
       if (req.body.removeQuestionImage === "true" && existing.questionImage) {
@@ -72,6 +76,15 @@ router.post("/update", upload.any(), async (req, res) => {
         existing.questionImage = newQuestionImage;
       }
 
+      // Handle logo image
+      if (req.body.removeLogo === "true" && existing.logo) {
+        const oldPath = path.join(__dirname, "..", "public", "uploads", existing.logo);
+        if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+        existing.logo = null;
+      } else if (newLogo) {
+        existing.logo = newLogo;
+      }
+
       // Handle options and images safely
       const updatedOptions = [];
 
@@ -80,7 +93,6 @@ router.post("/update", upload.any(), async (req, res) => {
         const prevOpt = existing.options?.[opt.index];
 
         if (opt.removeFlag === "true") {
-          // Remove old image
           if (prevOpt?.image) {
             const oldPath = path.join(__dirname, "..", "public", "uploads", prevOpt.image);
             if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
@@ -112,6 +124,8 @@ router.post("/update", upload.any(), async (req, res) => {
         correctAnswer,
         questionImage: newQuestionImage || null,
         questionImageLink: questionImageLink || "",
+        logo: newLogo || null,
+        mode: mode || "",
         options: finalOptions
       });
     }

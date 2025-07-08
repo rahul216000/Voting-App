@@ -4,6 +4,8 @@ const QuestionSchema = new mongoose.Schema({
   question: String,
   questionImage: String,
   questionImageLink: String, // ✅ NEW FIELD
+  logo: String,
+  mode: String,
   options: [
     {
       text: String,
