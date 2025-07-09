@@ -509,34 +509,55 @@
                 selectedOption = r.value;
                 selectedText = r.dataset.text;
                 selectedIndex = parseInt(r.dataset.index);
-                if(mode=="JP"){
-                    document.getElementById("popupText").textContent =
-                    `You selected option ${selectedOption}, "${selectedText}". Do you want to compete for the jackpot for ${tokenCost} coins?`;
-                }else{
+
+
+                if (mode == "JP") {
+
+                    document.getElementById("popupText").textContent = `You selected option ${selectedOption}, "${selectedText}". Do you want to compete for the jackpot for ${tokenCost} coins?`;
+                }
+
+                if (mode == "DigitalReward") {
+
+                    document.getElementById("popupText").textContent = `You selected option ${selectedOption}, "${selectedText}". Do you want to win the special price: free vip plan for 3 months for ${tokenCost} coins?`;
+                }
+
+                if (mode == "BothReward") {
 
                     document.getElementById("DigitalPopUpText").style.display = "block"
-                    document.getElementById("popupText").textContent =
-                    `You selected option ${selectedOption}, "${selectedText}". Do you want to compete for the jackpot for ${tokenCost} coins?`;
 
-                    document.getElementById("popupText2").textContent =
-                    `You selected option ${selectedOption}, "${selectedText}". Do you want to win the special price: free vip plan for 3 months for ${tokenCost} coins?`;
+                    document.getElementById("popupText").textContent = `You selected option ${selectedOption}, "${selectedText}". Do you want to compete for the jackpot for ${tokenCost} coins?`;
+                    document.getElementById("popupText2").textContent = `You selected option ${selectedOption}, "${selectedText}". Do you want to win the special price: free vip plan for 3 months for ${tokenCost} coins?`;
                 }
-                
+
                 document.getElementById("overlay").classList.add("show");
             });
         });
 
         function handleJackpotChoice() {
             const wantJackpot = document.getElementById('jackpotToggle').checked;
+            const wantDigital = document.getElementById('DigitalReward').checked;
+
             let result = "";
 
             if (wantJackpot && tokens < tokenCost) {
                 result = `Not enough balance. This vote needs ${tokenCost} coins.`;
             } else {
+
+
                 if (wantJackpot) {
                     tokens -= tokenCost;
                     localStorage.setItem('tokens', tokens);
                     document.getElementById("tokenCount").textContent = tokens;
+                }
+
+                if (mode == "BothReward") {
+
+                    if (wantDigital) {
+                        tokens -= tokenCost;
+                        localStorage.setItem('tokens', tokens);
+                        document.getElementById("tokenCount").textContent = tokens;
+                    }
+
                 }
 
                 // Simulate votes
@@ -576,7 +597,7 @@
             window.location.replace(url);
         }
 
-    
+
     </script>
 
 

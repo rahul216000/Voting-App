@@ -443,7 +443,7 @@
             </div>
 
             <h2 id="popupText2"></h2>
-            <div class="toggle-container"  id="DigitalPopUpText" style="display: none;">
+            <div class="toggle-container" id="DigitalPopUpText" style="display: none;">
                 <span>No</span>
                 <label class="switch">
                     <input type="checkbox" id="DigitalReward" checked>
@@ -485,12 +485,19 @@
                 if (mode == "JP") {
 
                     document.getElementById("popupText").textContent = `You selected option ${selectedOption}, answer ${selectedText}. Do you want to compete for the jackpot for ${tokenCost} coins?`;
-                } else {
-                    
+                }
+
+                if (mode == "DigitalReward") {
+
+                    document.getElementById("popupText").textContent = `You selected option ${selectedOption}, answer ${selectedText}. Do you want to win the special price: free vip plan for 3 months for ${tokenCost} coins?`;
+                }
+
+                if (mode == "BothReward") {
+
                     document.getElementById("DigitalPopUpText").style.display = "block"
 
-                    document.getElementById("popupText2").textContent = `You selected option ${selectedOption}, answer ${selectedText}. Do you want to compete for the jackpot for ${tokenCost} coins?`;
-                    document.getElementById("popupText").textContent = `You selected option ${selectedOption}, answer ${selectedText}. Do you want to win the special price: free vip plan for 3 months for ${tokenCost} coins?`;
+                    document.getElementById("popupText").textContent = `You selected option ${selectedOption}, answer ${selectedText}. Do you want to compete for the jackpot for ${tokenCost} coins?`;
+                    document.getElementById("popupText2").textContent = `You selected option ${selectedOption}, answer ${selectedText}. Do you want to win the special price: free vip plan for 3 months for ${tokenCost} coins?`;
                 }
                 document.getElementById("overlay").classList.add("show");
             });
@@ -498,32 +505,133 @@
 
         function handleJackpotChoice() {
             const wantJackpot = document.getElementById('jackpotToggle').checked ? "yes" : "no";
-            // const wantDigital = document.getElementById('jackpotToggle').checked ? "yes" : "no";
+            const wantDigital = document.getElementById('DigitalReward').checked ? "yes" : "no";
 
             let result = "";
 
-            if (wantJackpot === "yes") {
-                if (tokens < tokenCost) {
-                    result = `Not enough balance. This question needs ${tokenCost} coins.`;
+            if (mode == "JP") {
+                if (wantJackpot === "yes") {
+                    if (tokens < tokenCost) {
+                        result = `Not enough balance. This question needs ${tokenCost} coins.`;
+                    } else {
+                        tokens -= tokenCost;
+                        localStorage.setItem('tokens', tokens);
+
+                        document.getElementById("tokenCount").textContent = tokens;
+
+                        if (selectedOption === correctAnswer) {
+
+                            result = `Answer ${selectedOption} is the correct answer. You are qualified to win the jackpot.`;
+
+                        } else {
+                            result = `The correct answer is ${correctAnswer}. Thank you for your participation.`;
+                        }
+                    }
                 } else {
-                    tokens -= tokenCost;
-                    localStorage.setItem('tokens', tokens);
-
-                    document.getElementById("tokenCount").textContent = tokens;
-
                     if (selectedOption === correctAnswer) {
-                        result = `Answer ${selectedOption} is the correct answer. You are qualified to win the jackpot.`;
+                        result = `Answer ${selectedOption} is the correct answer. You are not participating in the contest.`;
                     } else {
                         result = `The correct answer is ${correctAnswer}. Thank you for your participation.`;
                     }
                 }
-            } else {
-                if (selectedOption === correctAnswer) {
-                    result = `Answer ${selectedOption} is the correct answer. You are not participating in the contest for the jackpot.`;
-                } else {
-                    result = `The correct answer is ${correctAnswer}. Thank you for your participation.`;
-                }
             }
+
+
+            if (mode == "DigitalReward") {
+
+                if (wantJackpot === "yes") {
+                    if (tokens < tokenCost) {
+                        result = `Not enough balance. This question needs ${tokenCost} coins.`;
+                    } else {
+                        tokens -= tokenCost;
+                        localStorage.setItem('tokens', tokens);
+
+                        document.getElementById("tokenCount").textContent = tokens;
+
+                        if (selectedOption === correctAnswer) {
+
+                            result = `Answer ${selectedOption} is the correct answer. You are qualified to win the 3 Months VIP PLAN.`;
+
+                            // if (mode == "JP") {
+                            //     result = `Answer ${selectedOption} is the correct answer. You are qualified to win the jackpot.`;
+                            // }
+                            // if (mode == "DigitalReward") {
+                            //     result = `Answer ${selectedOption} is the correct answer. You are qualified to win the 3 Months VIP PLAN.`;
+
+                            // }
+                            // if (mode == "BothReward") {
+                            //     result = `Answer ${selectedOption} is the correct answer. You are qualified to win both: the JACKPOT, and the 3 Months VIP PLAN`;
+
+                            // }
+
+                        } else {
+                            result = `The correct answer is ${correctAnswer}. Thank you for your participation.`;
+                        }
+                    }
+                } else {
+                    if (selectedOption === correctAnswer) {
+                        result = `Answer ${selectedOption} is the correct answer. You are not participating in the contest.`;
+                    } else {
+                        result = `The correct answer is ${correctAnswer}. Thank you for your participation.`;
+                    }
+                }
+
+            }
+
+
+            if (mode == "BothReward") {
+
+                if (wantJackpot === "yes" || wantDigital === "yes") {
+                    if (tokens < tokenCost) {
+                        result = `Not enough balance. This question needs ${tokenCost} coins.`;
+                    } else {
+                        tokens -= tokenCost;
+                        localStorage.setItem('tokens', tokens);
+
+                        document.getElementById("tokenCount").textContent = tokens;
+
+                        if (selectedOption === correctAnswer) {
+
+                            if (wantJackpot === "yes" && wantDigital === "yes") {
+                                tokens -= tokenCost;
+                                localStorage.setItem('tokens', tokens);
+
+                                document.getElementById("tokenCount").textContent = tokens;
+                                result = `Answer ${selectedOption} is the correct answer. You are qualified to win both: the JACKPOT, and the 3 Months VIP PLAN`;
+                            }
+
+                            if (wantJackpot === "yes" && wantDigital === "no") {
+                                result = `Answer ${selectedOption} is the correct answer. You are qualified to win the JACKPOT`;
+                            }
+
+                            if (wantJackpot === "no" && wantDigital === "yes") {
+                                result = `Answer ${selectedOption} is the correct answer. You are qualified to win the 3 Months VIP PLAN`;
+                            }
+
+
+                        } else {
+                            result = `The correct answer is ${correctAnswer}. Thank you for your participation.`;
+                        }
+                    }
+                } else {
+                    if (selectedOption === correctAnswer) {
+                        result = `Answer ${selectedOption} is the correct answer. You are not participating in the contest.`;
+                    } else {
+                        result = `The correct answer is ${correctAnswer}. Thank you for your participation.`;
+                    }
+                }
+
+
+
+
+
+
+
+            }
+
+
+
+
 
             document.getElementById("overlay").classList.remove("show");
             document.getElementById("resultText").textContent = result;

@@ -143,6 +143,35 @@
         padding: 20px;
       }
     }
+
+  .mode-checkboxes label {
+  display: inline-block;
+  margin-right: 10px;
+  cursor: pointer;
+  border: 2px solid var(--primary);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.mode-checkboxes input[type="checkbox"] {
+  display: none;
+}
+
+.mode-checkboxes span {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #fff;
+  color: var(--primary);
+  transition: background 0.3s, color 0.3s;
+}
+
+.mode-checkboxes input[type="checkbox"]:checked + span {
+  background-color: var(--primary);
+  color: #fff;
+}
+
+
+
   </style>
 </head>
 
@@ -196,10 +225,26 @@
     <input type="text" name="token"  value="<%= latest?.token || '' %>">
 
     <label>Select Mode</label>
-<select name="mode">
+<div class="mode-checkboxes">
+  <label>
+    <input type="checkbox" id="jpCheckbox"
+      <%= latest?.mode === 'JP' || latest?.mode === 'BothReward' ? 'checked' : '' %> >
+    <span>Jackpot</span>
+  </label>
+  <label>
+    <input type="checkbox" id="digitalCheckbox"
+      <%= latest?.mode === 'DigitalReward' || latest?.mode === 'BothReward' ? 'checked' : '' %> >
+    <span>Digital Reward</span>
+  </label>
+</div>
+
+<select name="mode" id="modeSelect" style="display: none;">
   <option value="JP" <%= latest?.mode === 'JP' ? 'selected' : '' %>>JP</option>
   <option value="DigitalReward" <%= latest?.mode === 'DigitalReward' ? 'selected' : '' %>>Digital Reward</option>
+  <option value="BothReward" <%= latest?.mode === 'BothReward' ? 'selected' : '' %>>Both Reward</option>
 </select>
+
+
 
 
     <button type="submit">Update</button>
@@ -326,6 +371,25 @@ function addOption(opt = {}) {
 window.addEventListener("DOMContentLoaded", () => {
   existingOptions.forEach(opt => addOption(opt));
 });
+
+ const jpCheckbox = document.getElementById('jpCheckbox');
+  const digitalCheckbox = document.getElementById('digitalCheckbox');
+  const modeSelect = document.getElementById('modeSelect');
+
+  function updateMode() {
+    if (jpCheckbox.checked && digitalCheckbox.checked) {
+      modeSelect.value = 'BothReward';
+    } else if (jpCheckbox.checked) {
+      modeSelect.value = 'JP';
+    } else if (digitalCheckbox.checked) {
+      modeSelect.value = 'DigitalReward';
+    } else {
+      modeSelect.value = ''; // Or set a default
+    }
+  }
+
+  jpCheckbox.addEventListener('change', updateMode);
+  digitalCheckbox.addEventListener('change', updateMode);
 
   </script>
 </body>
